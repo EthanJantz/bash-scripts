@@ -12,14 +12,12 @@ DARK_GTK_THEME="Yaru-dark"
 # /usr/share/icons
 LIGHT_ICON_THEME="Yaru"
 DARK_ICON_THEME="Yaru-dark"
-# Setting for changing the file explorer etc.
-preference='prefer-light'
 
 # editable, check www.timeanddate.com/sun for options
 COUNTRY="usa"
 CITY="chicago"
 
-LOGFILE=~/tmp/theme_switcher_data_"$COUNTRY"_"$CITY".out
+LOGFILE=theme_switcher_data_"$COUNTRY"_"$CITY".out
 wget -q "https://www.timeanddate.com/sun/$COUNTRY/$CITY" -O "$LOGFILE"
 
 SUNR=$(grep "Sunrise Today" "$LOGFILE" | grep -oE '((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))' | head -1 | date -f - +%Y%m%d%H%M)
@@ -32,6 +30,7 @@ if [ "$hour" -gt "$SUNR" ] && [ "$hour" -lt "$SUNS" ];
 then
     theme=$LIGHT_GTK_THEME
     icons=$LIGHT_ICON_THEME
+    preference='prefer-light'
 else
     theme=$DARK_GTK_THEME
     icons=$DARK_ICON_THEME
@@ -42,6 +41,7 @@ gsettings set org.gnome.desktop.interface gtk-theme $theme
 gsettings set org.gnome.desktop.interface icon-theme $icons
 gsettings set org.gnome.desktop.interface color-scheme $preference
 
+# Checks the theme preference setting, but the gtk-theme setting looks nicer in a message.
 if [ "$current_theme_setting" != "$(gsettings get org.gnome.desktop.interface color-scheme)" ];
 then 
     notify-send "Theme changed to $(gsettings get org.gnome.desktop.interface gtk-theme)"
